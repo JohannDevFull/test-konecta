@@ -20,17 +20,17 @@ class ClientsSeeder extends Seeder
             'email'     =>  'pp@test.com'
         ]);
 
-        DB::table('providers')->insert([
+        DB::table('clients')->insert([
             'name'      =>  'Fulanito de tales',
             'email'     =>  'fdt@test.com'
         ]);
 
-        DB::table('providers')->insert([
+        DB::table('clients')->insert([
             'name'      =>  'Client Test One',
             'email'     =>  'cl01@test.com'
         ]);
 
-        DB::table('providers')->insert([
+        DB::table('clients')->insert([
             'name'      =>  'Client Test Two',
             'email'     =>  'cl02@test.com'
         ]);
