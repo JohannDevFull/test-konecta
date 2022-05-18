@@ -33,7 +33,7 @@ class CashRegisterController extends Controller
     public function clientById($id)
     {
 
-        // sql  XD
+        // sql  
         $client=DB::select('SELECT * FROM clients WHERE id = ?', [$id]);
 
         $client=$client[0];

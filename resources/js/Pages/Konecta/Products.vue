@@ -29,7 +29,7 @@
 
                         <div id="example1_filter" class="" >
                             <label   class="sear-label "  >
-                                Buscar por # Factura o proveerdor:
+                                Buscar por Nombre o referencia:
                                 <input
                                     type="search"
                                     class="form-control form-control-sm"
@@ -119,11 +119,11 @@
                       <td>
 
 
-                        <button type="button" class="btn btn-outline-success mr-1" @click="viewInvoice(item.id)">
+                        <button type="button" class="btn btn-outline-success mr-1" @click="viewProduct(item.id)">
                           <i class="fas fa-eye"></i>
                         </button>
                           -
-                        <button type="button" class="btn btn-outline-primary mr-1" @click="editInvoice(item.id)">
+                        <button type="button" class="btn btn-outline-primary mr-1" @click="editProduct(i)">
                           <i class="fas fa-edit"></i>
                         </button>
                           -
@@ -218,10 +218,9 @@
 
         <ModalBootstrap :_id="'modal_product'"  >
             <div class="col-12 ">
-                <h4 class="mb-3" v-if=" editar_bool == false ">Crear producto</h4>
-                <h4 class="mb-3" v-else>Editar producto</h4>
+                <h4 class="mb-3" >Crear producto</h4>
                 
-                <form id="form_product" class="needs-validation" >
+                <form id="form_product" class="needs-validation" @submit.prevent="loading = true" >
                   
                     <div class="row g-3 mb-3">
 
@@ -234,10 +233,11 @@
                                 id="name"  
                                 type="text" 
                                 class="form-control was-validated" 
-                                placeholder="Nombre" 
-                                name="name"
+                                placeholder="Nombre producto" 
+                                name="name_product"
                                 v-model="form_product.name" 
                                 required
+                                :disabled="view_bool" 
                                 >
                             <div class="invalid-feedback">
                                 Valid first name is required.
@@ -245,17 +245,18 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label for="lastName" class="form-label">
-                                Referencia
+                            <label for="ref_product" class="form-label">
+                                Referencia producto
                                 <span class="text-danger">(*)</span>
                             </label>
                             <input 
-                                id="lastName" 
-                                name="last_name" 
+                                id="ref_product" 
+                                name="ref_product" 
                                 type="text" 
                                 class="form-control" 
-                                placeholder=""
+                                placeholder="Referencia producto"
                                 v-model="form_product.ref"  
+                                :disabled="view_bool"
                                 >
                             <div class="invalid-feedback">
                                 Valid last ref is required.
@@ -263,16 +264,16 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label for="password" class="form-label">
+                            <label for="unitary_value" class="form-label">
                                 Valor unitaio
                                 <span class="text-danger">(*)</span>
                             </label>
                             <input 
-                                id="password"  
-                                name="password"
-                                type="password" 
+                                id="unitary_value"  
+                                name="unitary_value"
+                                type="text" 
                                 class="form-control was-validated" 
-                                placeholder="+++++++" 
+                                placeholder="Valor unitaio" 
                                 v-model="form_product.unitary_value" 
                                 >
                             <div class="invalid-feedback">
@@ -281,16 +282,16 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label for="password_confirmation" class="form-label">
-                                Peso (en gramos)
+                            <label for="weight" class="form-label">
+                                Peso (en gramos o mililitros)
                                 <span class="text-danger">(*)</span>
                             </label>
                             <input 
-                                id="password_confirmation" 
-                                name="password_confirmation" 
-                                type="password" 
+                                id="weight" 
+                                name="weight" 
+                                type="text" 
                                 class="form-control" 
-                                placeholder="" 
+                                placeholder="Peso (en gramos o mililitros)" 
                                 v-model="form_product.weight" 
                                 required
                                 >
@@ -300,15 +301,15 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label for="phone" class="form-label">
-                                Categoria
-                                <span class="text-muted">(Optional)</span>
+                            <label for="fk_category_id" class="form-label">
+                                Categoria --
+                                <span class="text-danger">(*)</span>
                             </label>
 
-                            <select v-model="form_product.fk_category_id" class="form-select" aria-label="Default select example">
+                            <select v-model="form_product.fk_category_id" id="fk_category_id" name="fk_category_id" class="form-select" aria-label="Default select example">
                               <option selected>Open this select menu</option>
-                                <option  v-for="( item , i ) in categoris" :values="item.id" :key="i">
-                                    {{item.name}}
+                                <option  v-for="( item , i ) in categories" :value="item.id" :key="i">
+                                    {{item.name + item.id}} 
                                 </option>
                             </select>
                             <div class="invalid-feedback">
@@ -317,13 +318,13 @@
                         </div>
 
                         <div class="col-sm-6">
-                            <label for="lastName" class="form-label">
+                            <label for="stock" class="form-label">
                                 Stock
                                 <span class="text-danger">(*)</span>
                             </label>
                             <input 
-                                id="lastName" 
-                                name="last_name" 
+                                id="stock" 
+                                name="stock" 
                                 type="text" 
                                 class="form-control" 
                                 placeholder=""
@@ -333,6 +334,29 @@
                                 Valid last stock is required.
                             </div>
                         </div>
+
+                        <div class="col-sm-12">
+                            <label for="description" class="form-label">
+                                Descripción
+                                <span class="text-muted">(Optional)</span>
+                            </label>
+
+                            <textarea
+                                id="description" 
+                                name="description" 
+                                type="text" 
+                                class="form-control" 
+                                placeholder="Descripción" 
+                                v-model="form_product.description" 
+                                >
+                                
+                            </textarea>
+
+                            <div class="invalid-feedback">
+                                Valid last name is required.
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="d-flex justify-content-center mb-3">
@@ -344,8 +368,12 @@
                     </div>
 
                     <div class="d-flex justify-content-center">
+                        
+                        <button class="m-auto btn btn-primary btn-lg" type="submit" >
+                            Crear producto
+                        </button>
 
-                        <button class="m-auto btn btn-primary btn-lg" type="submit">Crear</button>
+
                     </div>
                         
                 </form>
@@ -357,11 +385,14 @@
 </template>
 
 <script>
+
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ModalBootstrap from './Components/ModalBootstrap.vue';
 
+import Swal from 'sweetalert2'
 
 export default {
+    props:['categories'],
     name: 'Products',
     data(){
         return {
@@ -391,17 +422,68 @@ export default {
             offset: 3,
             setTimeoutBuscador: '',
 
-
+            loading:false,
+            errors: [],
             editar_bool:false
         }
     },
     components:{
         AppLayout,
-        ModalBootstrap
+        ModalBootstrap,
+        Swal
     },
     mounted(){
 
-      this.getProducts();
+        this.getProducts();
+        
+        this.Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 4000
+        });
+
+        $.validator.setDefaults({
+            submitHandler:  ()=> {
+                this.store()
+            }
+        });
+          
+        $('#form_product').validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                ref_product: {
+                    required: true
+                },
+                unitary_value: {
+                    required: true
+                },
+                weight: {
+                    required: true
+                },
+                fk_category_id: {
+                    required: true
+                },
+                stock: {
+                    required: true
+                }
+            },
+            errorElement: 'span',
+            errorPlacement:  (error, element) => {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+
+              $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+
+              $(element).removeClass('is-invalid');
+            }
+        });
     },
     computed: {
         count() {
@@ -412,7 +494,8 @@ export default {
           }
           return counted;
         },
-        isActived() {
+        isActived(){
+
           return this.pagination.current_page;
         },
         pagesNumber() {
@@ -434,6 +517,22 @@ export default {
           }
           return pagesArray;
         },
+
+        validateRolesComputed()
+        {
+            let x = this.form_user.roles_user.length;
+            if ( x == 0)
+            {
+
+            }
+            else
+            {
+                $("#rol_validate").removeClass('error-j');
+                $("#vs1__combobox").removeClass('v-select-error');
+            }
+
+            return x;
+        }
     },
     methods:{
         getProducts(page)
@@ -466,6 +565,8 @@ export default {
         },
         createProduct()
         {
+            this.edit_bool=false;
+
             this.form_product={
                 name:'',
                 ref:'',
@@ -479,20 +580,56 @@ export default {
         },
         editProduct(i)
         {
-            this.form_product = this.users[i];
+            this.edit_bool=true;
+            this.form_product = this.products[i];
             $('#modal_product').modal('show');
         },
+        viewProduct(i)
+        {
 
+        },
+        async store()
+        {
+            this.errors=[];
 
+            alert("store")
+           
+            await axios.post('/products',this.form_product)
+            .then(response => {
+                if (response.data.status == 'ok')
+                {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    this.getProducts();
 
+                    setTimeout(()=>{
+                        $(".btn-close").trigger("click");
+                    },200);
 
+                }
+                else
+                {
+                    this.Toast.fire({
+                        icon: 'warning',
+                        title: 'Error de validación.'
+                    });
 
-
-
-
-
-
-
+                    this.errors = response.data.errors;
+                }
+            })
+            .catch(error => {
+                this.Toast.fire({
+                    icon: 'warning',
+                    title: 'Error del servidor.'
+                })
+            }); 
+        },
+        // Metodos paginación
         changePage(page) 
         {
           this.pagination.current_page = page;
@@ -522,28 +659,13 @@ export default {
         },
 
 
-        viewInvoice(id)
-        {
-        },
-        editInvoice(id)
-        {
-          this.storeInvoice.$state = { 
-            id: id
-          };
 
-          this.$router.push({ name: 'products_sales_edit', params: { id: id } })
-        },
         deleteInvoice(id)
         {
 
-          
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.store.token;
-
-          axios.delete(this.store.url_base+"products-sales/"+id)
+          axios.delete("products/"+id)
           .then(response => {
               
-            // this.pagination = response.data.pagination;
-            // this.products = response.data.products.data;
             alert("Factura Eliminada:"+id)
             this.getInvoice();
             

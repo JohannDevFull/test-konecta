@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
+use App\Models\Category;
 use App\Models\Product;
+
+
 
 class ProductsController extends Controller
 {
@@ -18,8 +22,10 @@ class ProductsController extends Controller
      */
     public function index()
     {
+        $client=DB::select('SELECT * FROM categories');
+        
         return Inertia::render('Konecta/Products', [
-            'products' => Product::all()
+            'categories' => $client
         ]);
     }
 
@@ -35,9 +41,14 @@ class ProductsController extends Controller
         $filed  = "name";
         $order  = $request->order;
 
-        $products = Product::orderBy( $filed , $order )
-        ->where('name','like','%'.$request['search'].'%')
+        $products = Product::select([
+            'products.*',
+            'categories.name as category_name',
+        ])
+        ->orderBy( $filed , $order )
+        ->where('products.name','like','%'.$request['search'].'%')
         ->orwhere('ref','like','%'.$request['search'].'%')
+        ->join('categories','products.fk_category_id','categories.id')
         ->paginate($show);
 
         return [
@@ -63,12 +74,12 @@ class ProductsController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [
-            'name'          => 'required|int',
-            'ref'           => 'required|int',
-            'unitary_value' => 'required|int',
-            'weight'        => 'required|int',
-            'fk_category_id'=> 'required|int',
-            'stock'         => 'required|int'
+            'name'          => 'required',
+            'ref'           => 'required',
+            'unitary_value' => 'required',
+            'weight'        => 'required',
+            'fk_category_id'=> 'required',
+            'stock'         => 'required'
         ]);
 
         if($validator->fails())
@@ -86,7 +97,11 @@ class ProductsController extends Controller
             'stock'             => $request->stock
         ]);
 
-        return response()->json(compact('product'),201);
+        return response()->json([
+            'status'    => 'ok',
+            'masage'    => 'Producto creado correctamente.',
+            'product'      => $product,
+        ]);
     }
 
     /**
@@ -99,12 +114,12 @@ class ProductsController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name'          => 'required|int',
-            'ref'           => 'required|int',
-            'unitary_value' => 'required|int',
-            'weight'        => 'required|int',
-            'fk_category_id'=> 'required|int',
-            'stock'         => 'required|int'
+            'name'          => 'required',
+            'ref'           => 'required',
+            'unitary_value' => 'required',
+            'weight'        => 'required',
+            'fk_category_id'=> 'required',
+            'stock'         => 'required'
         ]);
 
         if($validator->fails())
