@@ -23,6 +23,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $best_selling_product=[];
+        $product_with_more_stock=[];
+        
         $best_selling_product = DB::select('
             SELECT products.name, SUM(invoices_products.cant) as cantidad
             FROM invoices_products 
@@ -38,9 +41,19 @@ class DashboardController extends Controller
         $clients = Client::all(); 
         $invoices = Invoice::all(); 
 
+        if (isset($best_selling_product[0]))
+        {
+            $best_selling_product = $best_selling_product[0];
+        }
+
+        if (isset($product_with_more_stock[0]))
+        {
+            $product_with_more_stock = $product_with_more_stock[0];
+        }
+
         return Inertia::render('Welcome', [
-            'best_selling_product' => $best_selling_product[0],
-	        'product_with_more_stock' => $product_with_more_stock[0],
+            'best_selling_product' => $best_selling_product,
+	        'product_with_more_stock' => $product_with_more_stock,
             'clients' => count($clients),
             'invoices' => count($invoices),
 

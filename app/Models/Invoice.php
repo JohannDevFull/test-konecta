@@ -12,7 +12,7 @@ class Invoice extends Model
     protected $table = 'invoices';
     
     protected $fillable = [ 
-        'client_id',
+        'fk_client_id',
         'value_pay'
     ];
 

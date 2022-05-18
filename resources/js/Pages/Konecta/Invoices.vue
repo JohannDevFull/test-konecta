@@ -55,14 +55,14 @@
         <thead>
           <tr>
             <th scope="col" style="cursor:pointer" @click="changeOrder('number_invoice')">
-              Nmero factura 
+              ID
               <template v-if="field == 'number_invoice'">
                 <i class="fas fa-angle-double-down text-primary" v-if="order == 'DESC'"></i>
                 <i class="fas fa-angle-double-up text-primary" v-else></i>
               </template>
             </th>
             <th scope="col" style="cursor:pointer" @click="changeOrder('provider_id')">
-              Proveedor
+              Cliente
               <template v-if="field == 'provider_id'">
                 <i class="fas fa-angle-double-down text-primary" v-if="order == 'DESC'"></i>
                 <i class="fas fa-angle-double-up text-primary" v-else></i>
@@ -105,8 +105,8 @@
         <tbody>
           
           <tr v-for="(item,i) in invoices_" :key="i">
-            <th scope="row">{{item.number_invoice}}</th>
-            <td>{{item.provider_id}}</td>
+            <th scope="row">{{item.id}}</th>
+            <td>{{item.name_client}}</td>
             <td>{{item.iva}}</td>
             <td>{{item.value_without_iva}}</td>
             <td>{{item.value_pay}}</td>

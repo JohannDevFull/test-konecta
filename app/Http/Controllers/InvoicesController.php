@@ -27,8 +27,15 @@ class InvoicesController extends Controller
      */
     public function index()
     {
+        $invoices = Invoice::select([
+            "invoices.*",
+            "clients.name as name_client",
+        ])
+        ->join('clients','invoices.fk_client_id','clients.id')
+        ->get();
+
         return Inertia::render('Konecta/Invoices',[
-            "invoices"      => Invoice::all()
+            "invoices"      => $invoices
         ]);
     }
 
@@ -38,9 +45,14 @@ class InvoicesController extends Controller
         $field  = $request->field;
         $order  = $request->order;
 
-        $invoices = Invoice::orderBy($field, $order)
-        ->where('id','like','%'.$request['search'].'%')
-        ->orwhere('client_id','like','%'.$request['search'].'%')
+        $invoices = Invoice::select([
+            "invoices.*",
+            "clients.name as name_client",
+        ])
+        ->orderBy($field, $order)
+        ->where('invoices.id','like','%'.$request['search'].'%')
+        ->orwhere('clients.name','like','%'.$request['search'].'%')
+        ->join('clients','invoices.fk_client_id','clients.id')
         ->paginate($show);
 
         return [
@@ -82,7 +94,7 @@ class InvoicesController extends Controller
         {
             $invoice = Invoice::create([
                 // 'consecutive'           => $consecutive,
-                'client_id'           => $request->id_client,
+                'fk_client_id'           => intval($request->id_client),
                 'value_pay'           => $request->value_pay
             ]);
 
