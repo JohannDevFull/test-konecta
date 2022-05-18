@@ -17,13 +17,15 @@
         </div>
 
         <div class="row">
+            
             <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-info">
                   <div class="inner">
-                    <h3>150</h3>
+                    <h3>{{best_selling_product.cantidad}}</h3>
 
-                    <p>New Orders</p>
+                    <p>{{best_selling_product.name}}</p>
+                    <p> <b> Producto mas vendido </b> </p>
                   </div>
                   <div class="icon">
                     <i class="ion ion-bag"></i>
@@ -31,14 +33,17 @@
                   <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-            <!-- ./col -->
+
             <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-success">
                   <div class="inner">
-                    <h3>53<sup style="font-size: 20px">%</sup></h3>
+                    <h3>{{product_with_more_stock.stock}}</h3>
 
-                    <p>Bounce Rate</p>
+                    <p>{{product_with_more_stock.name}}</p>
+                    <p>
+                      <b>  Producto con mas stock </b>
+                    </p>
                   </div>
                   <div class="icon">
                     <i class="ion ion-stats-bars"></i>
@@ -46,14 +51,15 @@
                   <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-            <!-- ./col -->
+
             <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-warning">
                   <div class="inner">
-                    <h3>44</h3>
+                    <h3>{{clients}}</h3>
 
-                    <p>User Registrations</p>
+                    <p>-</p>
+                    <p>Clientes Registrados</p>
                   </div>
                   <div class="icon">
                     <i class="ion ion-person-add"></i>
@@ -61,14 +67,15 @@
                   <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                 </div>
             </div>
-            <!-- ./col -->
+
             <div class="col-lg-3 col-6">
                 <!-- small box -->
                 <div class="small-box bg-danger">
                   <div class="inner">
-                    <h3>65</h3>
+                    <h3>{{invoices}}</h3>
 
-                    <p>Unique Visitors</p>
+                    <p>-</p>
+                    <p>Ventas realizadas</p>
                   </div>
                   <div class="icon">
                     <i class="ion ion-pie-graph"></i>
@@ -82,6 +89,7 @@
         <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
 
         <h2>Section title</h2>
+
         <div class="table-responsive">
             <table class="table table-striped table-sm">
                   <thead>
@@ -113,6 +121,11 @@
 </template>
 
 <style scoped>
+  .small-box{
+    padding: 10px;
+    border-radius: 16px !important;
+  }
+
     .bg-gray-100 {
         background-color: #f7fafc;
         background-color: rgba(247, 250, 252, var(--tw-bg-opacity));
@@ -181,7 +194,7 @@
     import { Head, Link } from '@inertiajs/inertia-vue3';
 
     export default {
-        props:['can','users'],
+        props:['best_selling_product','product_with_more_stock','invoices','clients'],
         components: {
             AppLayout,
             Link
