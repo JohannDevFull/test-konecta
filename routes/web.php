@@ -4,6 +4,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\CashRegisterController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,21 +19,15 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/',                     [DashboardController::class, 'index']);
+Route::get('/',                     [DashboardController::class, 'index']);
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-});
+Route::get('/products',             [ProductsController::class, 'index']);
+Route::post('/products',            [ProductsController::class, 'store']);
+Route::put('/products',             [ProductsController::class, 'update']);
+Route::post('/products-pagination', [ProductsController::class, 'pagination']);
+Route::delete('/products',          [ProductsController::class, 'destroy']);
+
+Route::get('/cash-register',        [CashRegisterController::class, 'index' ]);
+Route::get('/client/{id}',           [CashRegisterController::class, 'clientById']);
+

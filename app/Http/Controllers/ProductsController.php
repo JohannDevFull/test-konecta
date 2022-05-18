@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
 
-use App\Models\Products;
+use App\Models\Product;
 
 class ProductsController extends Controller
 {
@@ -19,7 +19,7 @@ class ProductsController extends Controller
     public function index()
     {
         return Inertia::render('Konecta/Products', [
-            'products' => Products::all()
+            'products' => Product::all()
         ]);
     }
 
@@ -32,9 +32,10 @@ class ProductsController extends Controller
     {
         $show   = $request->show;
         $filed  = $request->filed;
+        $filed  = "name";
         $order  = $request->order;
 
-        $products = Products::orderBy( $filed , $order )
+        $products = Product::orderBy( $filed , $order )
         ->where('name','like','%'.$request['search'].'%')
         ->orwhere('ref','like','%'.$request['search'].'%')
         ->paginate($show);
@@ -76,7 +77,7 @@ class ProductsController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $product = Products::create([
+        $product = Product::create([
             'name'              => $request->name,
             'ref'               => $request->ref,
             'unitary_value'     => $request->unitary_value,
@@ -112,7 +113,7 @@ class ProductsController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $product = Products::where('id', $id)
+        $product = Product::where('id', $id)
         ->update([
             'name'              => $request->name,
             'ref'               => $request->ref,
@@ -133,7 +134,7 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
-        $product= Products::where('id','=',$id)
+        $product= Product::where('id','=',$id)
         ->delete();
 
         return response()->json(compact('product'),201);

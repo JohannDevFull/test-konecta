@@ -1,8 +1,3 @@
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Jetstream/Welcome.vue';
-</script>
-
 <template>
     <AppLayout title="Dashboard">
         <template #header>
@@ -20,3 +15,8 @@ import Welcome from '@/Jetstream/Welcome.vue';
         </div>
     </AppLayout>
 </template>
+
+<script setup>
+    import AppLayout from '@/Layouts/AppLayout.vue';
+    import Welcome from '@/Jetstream/Welcome.vue';
+</script>
