@@ -23723,12 +23723,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     deleteProduct: function deleteProduct(id) {
       var _this5 = this;
 
-      axios["delete"]("products/" + id).then(function (response) {
-        alert("Factura Eliminada:" + id);
+      sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire({
+        title: 'Quieres eliminar este producto?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        denyButtonText: "Cancelar"
+      }).then(function (result) {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          axios["delete"]("products/" + id).then(function (response) {
+            sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire('Producto eliminado!', '', 'success');
 
-        _this5.getInvoice();
-      })["catch"](function (error) {
-        var data = error.response.data;
+            _this5.getProducts();
+          })["catch"](function (error) {
+            var data = error.data;
+          });
+        } else if (result.isDenied) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire('Ten mas cuidado a la proxima', '', 'info');
+        }
       });
     }
   }

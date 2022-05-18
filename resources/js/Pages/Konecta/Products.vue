@@ -715,17 +715,31 @@ export default {
 
         deleteProduct(id)
         {
+            Swal.fire({
+                title: 'Quieres eliminar este producto?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                denyButtonText: `Cancelar`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed)
+                {
+                    axios.delete("products/"+id)
+                    .then(response => {
+                        Swal.fire('Producto eliminado!', '', 'success')
+                        this.getProducts();
+                    })
+                    .catch(error => {
+                      var data = error.data;
+                    });
 
-          axios.delete("products/"+id)
-          .then(response => {
-              
-            alert("Factura Eliminada:"+id)
-            this.getInvoice();
-            
-          })
-          .catch(error => {
-              var data = error.response.data;
-          });
+                }
+                else if (result.isDenied)
+                {
+                    Swal.fire('Ten mas cuidado a la proxima', '', 'info')
+                }
+            });
         }
     }
 }

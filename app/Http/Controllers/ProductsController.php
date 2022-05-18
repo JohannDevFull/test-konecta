@@ -139,8 +139,8 @@ class ProductsController extends Controller
        
         return response()->json([
             'status'    => 'ok',
-            'masage'    => 'Producto actialixado correctamente.',
-            'product'      => $product,
+            'masage'    => 'Producto actializado correctamente.',
+            'product'      => $product
         ]);
     }
 
@@ -155,6 +155,10 @@ class ProductsController extends Controller
         $product= Product::where('id','=',$id)
         ->delete();
 
-        return response()->json(compact('product'),201);
+        return response()->json([
+            'status'    => 'ok',
+            'masage'    => 'Producto eliminado correctamente.',
+            'product'      => $product
+        ]);
     }
 }
