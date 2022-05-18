@@ -37,15 +37,14 @@ class ProductsController extends Controller
     public function pagination(Request $request)
     {
         $show   = $request->show;
-        $filed  = $request->filed;
-        $filed  = "name";
+        $field  = $request->field;
         $order  = $request->order;
 
         $products = Product::select([
             'products.*',
             'categories.name as category_name',
         ])
-        ->orderBy( $filed , $order )
+        ->orderBy( $field , $order )
         ->where('products.name','like','%'.$request['search'].'%')
         ->orwhere('ref','like','%'.$request['search'].'%')
         ->join('categories','products.fk_category_id','categories.id')
@@ -138,7 +137,11 @@ class ProductsController extends Controller
             'stock'             => $request->stock
         ]);
        
-        return response()->json(compact('product'),201);
+        return response()->json([
+            'status'    => 'ok',
+            'masage'    => 'Producto actialixado correctamente.',
+            'product'      => $product,
+        ]);
     }
 
     /**

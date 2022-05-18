@@ -24,7 +24,7 @@ Route::get('/',                     [DashboardController::class, 'index']);
 
 Route::get('/products',             [ProductsController::class, 'index']);
 Route::post('/products',            [ProductsController::class, 'store']);
-Route::put('/products',             [ProductsController::class, 'update']);
+Route::put('/products/{id}',        [ProductsController::class, 'update']);
 Route::post('/products-pagination', [ProductsController::class, 'pagination']);
 Route::delete('/products',          [ProductsController::class, 'destroy']);
 

@@ -36,7 +36,7 @@
                                     placeholder=""
                                     aria-controls="example1"
                                     v-model="search"
-                                    @keyup="searchInvoice()"
+                                    @keyup="searchProduct()"
                                 />
                             </label>
                         </div>
@@ -119,7 +119,7 @@
                       <td>
 
 
-                        <button type="button" class="btn btn-outline-success mr-1" @click="viewProduct(item.id)">
+                        <button type="button" class="btn btn-outline-success mr-1" @click="viewProduct(i)">
                           <i class="fas fa-eye"></i>
                         </button>
                           -
@@ -127,7 +127,7 @@
                           <i class="fas fa-edit"></i>
                         </button>
                           -
-                        <button type="button" class="btn btn-outline-danger mr-1" @click="deleteInvoice(item.id)">
+                        <button type="button" class="btn btn-outline-danger mr-1" @click="deleteProduct(item.id)">
                           <i class="fas fa-trash-alt"></i>
                         </button>
                         
@@ -218,7 +218,8 @@
 
         <ModalBootstrap :_id="'modal_product'"  >
             <div class="col-12 ">
-                <h4 class="mb-3" >Crear producto</h4>
+                <h4 class="mb-3" v-if=" edit_bool == false ">Crear producto</h4>
+                <h4 class="mb-3" v-else>Editar producto</h4>
                 
                 <form id="form_product" class="needs-validation" @submit.prevent="loading = true" >
                   
@@ -369,10 +370,13 @@
 
                     <div class="d-flex justify-content-center">
                         
-                        <button class="m-auto btn btn-primary btn-lg" type="submit" >
+                        <button class="m-auto btn btn-primary btn-lg" type="submit" v-if="edit_bool == false">
                             Crear producto
                         </button>
 
+                        <button class="m-auto btn btn-primary btn-lg" type="submit" v-else>
+                            Actualizar producto
+                        </button>
 
                     </div>
                         
@@ -445,7 +449,15 @@ export default {
 
         $.validator.setDefaults({
             submitHandler:  ()=> {
-                this.store()
+
+                if (this.edit_bool == false)
+                {
+                    this.store()
+                }
+                else
+                {
+                    this.update()
+                }
             }
         });
           
@@ -486,7 +498,7 @@ export default {
         });
     },
     computed: {
-        count() {
+        count(){
           var counted = 0;
           counted = this.pagination.from + parseInt(this.show) - 1;
           if (counted > this.pagination.total) {
@@ -586,15 +598,56 @@ export default {
         },
         viewProduct(i)
         {
-
+            this.view_bool=true;
+            this.form_product = this.products[i];
+            $('#modal_product').modal('show');
         },
         async store()
         {
             this.errors=[];
-
-            alert("store")
            
             await axios.post('/products',this.form_product)
+            .then(response => {
+                if (response.data.status == 'ok')
+                {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Your work has been saved',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    this.getProducts();
+
+                    setTimeout(()=>{
+                        $(".btn-close").trigger("click");
+                    },200);
+
+                }
+                else
+                {
+                    this.Toast.fire({
+                        icon: 'warning',
+                        title: 'Error de validación.'
+                    });
+
+                    this.errors = response.data.errors;
+                }
+            })
+            .catch(error => {
+                this.Toast.fire({
+                    icon: 'warning',
+                    title: 'Error del servidor.'
+                })
+            }); 
+        },
+        async update()
+        {
+            this.errors=[];
+
+            alert("update"+this.form_product.id)
+           
+            await axios.put('/products/'+this.form_product.id,this.form_product)
             .then(response => {
                 if (response.data.status == 'ok')
                 {
@@ -651,7 +704,7 @@ export default {
 
           this.getProducts();
         },
-        searchInvoice(){
+        searchProduct(){
           
           clearTimeout( this.setTimeoutBuscador );
 
@@ -660,7 +713,7 @@ export default {
 
 
 
-        deleteInvoice(id)
+        deleteProduct(id)
         {
 
           axios.delete("products/"+id)
