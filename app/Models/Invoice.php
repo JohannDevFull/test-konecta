@@ -13,12 +13,7 @@ class Invoice extends Model
     
     protected $fillable = [ 
         'client_id',
-        'branch_office_id',
-        'consecutive_invoice', 
-        'value_without_iva',
-        'iva', 
-        'value_pay',
-        'date_invoice'
+        'value_pay'
     ];
 
     protected $casts = [

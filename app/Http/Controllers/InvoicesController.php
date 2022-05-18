@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\InvoicesSystem;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Invoice;
 
 use App\Models\InvoiceProduct;
+use App\Models\Product;
+
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -24,11 +27,9 @@ class InvoicesController extends Controller
      */
     public function index()
     {
-        //
-        $consecutivo=InvoiceSale::all()
-        ->limit(10);
-
-        return $consecutivo;
+        return Inertia::render('Konecta/Invoices',[
+            "invoices"      => Invoice::all()
+        ]);
     }
 
     public function pagination(Request $request)
@@ -37,11 +38,9 @@ class InvoicesController extends Controller
         $field  = $request->field;
         $order  = $request->order;
 
-
-
-        $invoices = InvoiceSale::orderBy($field, $order)
-        ->where('number_invoice','like','%'.$request['search'].'%')
-        ->orwhere('number_invoice','like','%'.$request['search'].'%')
+        $invoices = Invoice::orderBy($field, $order)
+        ->where('id','like','%'.$request['search'].'%')
+        ->orwhere('client_id','like','%'.$request['search'].'%')
         ->paginate($show);
 
         return [
@@ -65,9 +64,10 @@ class InvoicesController extends Controller
      */
     public function store(Request $request)
     {
+        $invoice=[];
         $validator = Validator::make($request->all(), [
-            'fk_client_id'               => 'required|int',
-            'number_invoice'            => 'required|int'
+            'id_client'               => 'required|int',
+            'value_pay'            => 'required'
         ]);
 
         if($validator->fails())
@@ -76,31 +76,121 @@ class InvoicesController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $date = Carbon::now();
+        $error_stock = $this->validateStock($request->items_products);
 
-        $invoice = Invoice::create([
-
-            'number_invoice'        => $request->number_invoice,
-            'fk_client_id'           => $request->provider_id,
-            'value_without_iva'     => $request->value_without_iva,
-            'iva'                   => $request->iva,
-            'value_pay'             => $request->value_pay
-        ]);
-
-        foreach ($request->items_invoice as $key ) 
+        if ($error_stock['error'] == false)
         {
-            $items_invoice = InvoiceProduct::create([
-                'invoices_id'   => $invoice->id,
-                'products_id'   => $key['code'],
-                'cant'          => $key['cant'],
-                'iva'           => $key['iva_pro'],
-                'value_unitary' => $key['val_uni'],
-                'value_total'   => $key['total']
+            $invoice = Invoice::create([
+                // 'consecutive'           => $consecutive,
+                'client_id'           => $request->id_client,
+                'value_pay'           => $request->value_pay
+            ]);
+
+            foreach ($request->items_products as $key ) 
+            {
+                $items_invoice = InvoiceProduct::create([
+                    'invoices_id'   => $invoice->id,
+                    'products_id'   => $key['code'],
+                    'cant'          => $key['cant'],
+                    'value_unitary' => $key['val_uni'],
+                    'value_total'   => $key['total']
+                ]);
+            }
+        }
+        else
+        {
+            return response()->json([
+                'status'    => 'error_stock',
+                'masage'    => 'Error productos con falta de stock',
+                'product'      => $error_stock['list_errors']
             ]);
         }
 
-        return response()->json(compact('invoice','items_invoice'),201);
+        $invoice = $this->updateStocks($request->items_products);
+
+        return response()->json([
+            'status'    => 'ok',
+            'masage'    => 'Venta registrada correctamente.',
+            'product'      => $invoice,
+        ]);
     }
+
+    public function validateStock( $items_products )
+    {
+        $items_products_resp = array();
+        $error=false;
+        
+        foreach ($items_products as $key ) 
+        {
+            $product = Product::find($key['code']);
+            if ( $product->stock < $key['cant'] )
+            {
+                $key['error_stock'] = true ;
+                $key['current_stock'] = $product->stock ;
+                $error=true;
+                $items_products_resp[] = $key ;
+            }
+            else
+            {
+                $key['error_stock'] = false ;
+                $key['current_stock'] = $product->stock ;
+            }
+        }
+
+        $result = [
+            "error"         => $error,
+            "list_errors"   => $items_products_resp
+        ];
+
+        return $result;
+    }
+
+    public function updateStocks( $items_products )
+    {
+        $items_products_resp = array();
+        $error=false;
+        
+        foreach ($items_products as $key ) 
+        {
+            $product = Product::find($key['code']);
+
+            $product->stock = $product->stock - $key['cant'];
+
+            $product->save();
+            
+            $items_products_resp[] = $key ;
+        }
+
+        return $items_products_resp;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Display the specified resource.
