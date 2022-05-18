@@ -16,7 +16,7 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             
-            $table->foreignId('client_id')->references('id')->on('clients');
+            $table->foreignId('fk_client_id')->references('id')->on('clients');
             $table->decimal('value_pay', $precision = 13, $scale = 2); 
             
             $table->timestamps();
