@@ -58,6 +58,13 @@
               
                 <thead>
                     <tr>
+                        <th scope="col" style="cursor:pointer" @click="changeOrder('id')">
+                            #ID 
+                            <template v-if="field == 'id'">
+                              <i class="fas fa-angle-double-down text-primary" v-if="order == 'DESC'"></i>
+                              <i class="fas fa-angle-double-up text-primary" v-else></i>
+                            </template>
+                        </th>
                         <th scope="col" style="cursor:pointer" @click="changeOrder('name')">
                             Nombre 
                             <template v-if="field == 'name'">
@@ -110,6 +117,7 @@
                 <tbody>
                 
                     <tr v-for="(item,i) in products" :key="i">
+                      <td>{{item.id}}</td>
                       <td>{{item.name}}</td>
                       <td>{{item.ref}}</td>
                       <td>{{item.unitary_value}}</td>

@@ -161,4 +161,24 @@ class ProductsController extends Controller
             'product'      => $product
         ]);
     }
+
+    
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getProductById($id)
+    {
+        $product= Product::where('id','=',$id)
+        ->get();
+
+        return response()->json([
+            'status'    => 'ok',
+            'masage'    => 'Producto.',
+            'product'      => $product[0]
+        ]);
+    }
 }
