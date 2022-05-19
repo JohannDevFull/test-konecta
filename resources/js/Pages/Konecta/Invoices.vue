@@ -369,7 +369,6 @@ export default {
     {
 
       
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.store.token;
 
       axios.delete(this.store.url_base+"invoices-sales/"+id)
       .then(response => {

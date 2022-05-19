@@ -135,10 +135,10 @@
         </script>
 
         <!-- jQuery -->
-        <script src="http://system-udca.com/assets/admin-lte-v3.2.0/plugins/jquery/jquery.min.js"></script>
+        <script src="assets/admin-lte-v3.2.0/plugins/jquery/jquery.min.js"></script>
 
-        <script src="http://system-udca.com/assets/admin-lte-v3.2.0/plugins/jquery-validation/jquery.validate.min.js"></script>
-        <script src="http://system-udca.com/assets/admin-lte-v3.2.0/plugins/jquery-validation/additional-methods.min.js"></script>
+        <script src="assets/admin-lte-v3.2.0/plugins/jquery-validation/jquery.validate.min.js"></script>
+        <script src="assets/admin-lte-v3.2.0/plugins/jquery-validation/additional-methods.min.js"></script>
         
     </body>
 </html>

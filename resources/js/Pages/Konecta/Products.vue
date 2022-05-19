@@ -537,7 +537,6 @@ export default {
           }
           return pagesArray;
         },
-
         validateRolesComputed()
         {
             let x = this.form_user.roles_user.length;
