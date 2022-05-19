@@ -135,10 +135,10 @@
         </script>
 
         <!-- jQuery -->
-        <script src="assets/admin-lte-v3.2.0/plugins/jquery/jquery.min.js"></script>
+        <script src="assets/plugins/jquery/jquery.min.js"></script>
 
-        <script src="assets/admin-lte-v3.2.0/plugins/jquery-validation/jquery.validate.min.js"></script>
-        <script src="assets/admin-lte-v3.2.0/plugins/jquery-validation/additional-methods.min.js"></script>
+        <script src="assets/plugins/jquery-validation/jquery.validate.min.js"></script>
+        <script src="assets/plugins/jquery-validation/additional-methods.min.js"></script>
         
     </body>
 </html>
